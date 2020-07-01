@@ -2,10 +2,10 @@ import logging
 from urllib.parse import urljoin
 
 from aiogram import Bot, Dispatcher, executor, types
-from aiogram.dispatcher.filters.state import StatesGroup, State
+from aiogram.dispatcher.webhook import get_new_configured_app
 from aiogram.bot import api
 import asyncio
-import aiohttp
+from aiohttp import web
 import random
 from time import sleep
 
@@ -26,8 +26,6 @@ WEBAPP_PORT = 32102
 WEBHOOK_URL = urljoin(WEBHOOK_HOST,WEBHOOK_PATH)
 
 
-class Form(StatesGroup):
-    start_command = State()
 
 @dp.message_handler(commands=['help'])
 async def send_menu(message: types.Message):
@@ -92,7 +90,7 @@ async def on_shutdown(dp):
 
 
 if __name__ == '__main__':
-    executor.start_webhook(
+    """executor.start_webhook(
         dispatcher=dp,
         webhook_path=WEBHOOK_PATH,
         on_startup=on_startup,
@@ -100,4 +98,7 @@ if __name__ == '__main__':
         skip_updates=True,
         host=WEBAPP_HOST,
         port=WEBAPP_PORT,
-    )
+    )"""
+    app = get_new_configured_app(dispatcher=dp, path=WEBHOOK_PATH)
+    app.on_startup(on_startup)
+    web.run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT)
