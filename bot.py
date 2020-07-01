@@ -1,4 +1,5 @@
 import logging
+from urllib.parse import urljoin
 
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.filters.state import StatesGroup, State
@@ -17,12 +18,12 @@ bot = Bot(token='1359919586:AAG8rzjvD18zcMWJqLg-7Wd6beM1j88i8MY')
 dp = Dispatcher(bot)
 
 
-WEBHOOK_HOST = 'https://immense-taiga-94950.herokuapp.com/' + TOKEN
-WEBHOOK_PATH = ''
+WEBHOOK_HOST = 'https://immense-taiga-94950.herokuapp.com/'
+WEBHOOK_PATH = '/webhook/' + TOKEN
 WEBAPP_HOST = '0.0.0.0'
 WEBAPP_PORT = 32102
 
-WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
+WEBHOOK_URL = urljoin(WEBHOOK_HOST,WEBHOOK_PATH)
 
 
 class Form(StatesGroup):
