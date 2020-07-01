@@ -2,6 +2,7 @@ import logging
 
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.bot import api
+import asyncio
 import aiohttp
 import random
 from time import sleep
@@ -9,6 +10,9 @@ from time import sleep
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+PORT = 32100
+TOKEN = '1359919586:AAG8rzjvD18zcMWJqLg-7Wd6beM1j88i8MY'
 bot = Bot(token='1359919586:AAG8rzjvD18zcMWJqLg-7Wd6beM1j88i8MY')
 dp = Dispatcher(bot)
 
@@ -48,7 +52,11 @@ async def style_transfer(message: types.Message):
 
 
 def main():
-    executor.start_polling(dp)
+    # executor.start_polling(dp)
+    executor.start_webhook(listen="0.0.0.0",
+                   port=int(PORT),
+                   url_path=TOKEN)
+    executor.bot.setWebhook('https://immense-taiga-94950.herokuapp.com/' + TOKEN)
 
 
 if __name__ == '__main__':
