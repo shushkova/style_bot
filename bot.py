@@ -18,11 +18,11 @@ bot = Bot(token='1359919586:AAG8rzjvD18zcMWJqLg-7Wd6beM1j88i8MY')
 dp = Dispatcher(bot)
 
 WEBHOOK_HOST = 'https://immense-taiga-94950.herokuapp.com/'
-WEBHOOK_PATH = '/webhook/'
+WEBHOOK_PATH = '/webhook/' + TOKEN
 WEBAPP_HOST = '0.0.0.0'
 WEBAPP_PORT = 32102
 
-WEBHOOK_URL = urljoin(WEBHOOK_HOST,WEBHOOK_PATH)
+WEBHOOK_URL = urljoin(WEBHOOK_HOST, WEBHOOK_PATH)
 
 
 
