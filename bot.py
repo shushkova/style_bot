@@ -1,6 +1,7 @@
 import logging
 
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.bot import api
 import asyncio
 import aiohttp
@@ -17,11 +18,15 @@ dp = Dispatcher(bot)
 
 
 WEBHOOK_HOST = 'https://immense-taiga-94950.herokuapp.com/' + TOKEN
-WEBHOOK_PATH = '/webhook'
+WEBHOOK_PATH = ''
 WEBAPP_HOST = '0.0.0.0'
 WEBAPP_PORT = 32102
 
 WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
+
+
+class Form(StatesGroup):
+    start_command = State()
 
 @dp.message_handler(commands=['help'])
 async def send_menu(message: types.Message):
