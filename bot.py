@@ -57,7 +57,7 @@ async def process_photo(message: types.Message):
         filename = 'photo.jpeg'
         destination = DESTINATION_USER_PHOTO + filename
         await bot.send_message(message.from_user.id, 'Фотография обрабатывается...')
-        await message.photo.download(destination=destination)
+        await message.photo[-1].download(destination=destination)
         os.system("python pytorch-CycleGAN-and-pix2pix/test.py --dataroot 'pytorch-CycleGAN-and-pix2pix/photo' --name "
                   "horse2zebra_pretrained --model test --no_dropout --gpu_ids -1")
 
