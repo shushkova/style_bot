@@ -47,6 +47,7 @@ async def send_menu(message: types.Message):
 @dp.message_handler(commands=['start'])
 async def start_command(message: types.Message):
     """отправиь список команд бота"""
+    os.system('bash pytorch-CycleGAN-and-pix2pix/scripts/download_cyclegan_model.sh horse2zebra')
     os.system("python pytorch-CycleGAN-and-pix2pix/test.py --dataroot 'pytorch-CycleGAN-and-pix2pix/photo' --name "
               "horse2zebra_pretrained --model test --no_dropout --gpu_ids -1")
     await message.reply("Привет!\nЯ - StyleTransferBot!\nПришлите картинки, которые Вы хотите преобразовать")
