@@ -55,7 +55,6 @@ async def start_command(message: types.Message):
 async def process_photo(message: types.Message):
     try:
         filename = 'photo.jpeg'
-        os.makedirs("/photos", exist_ok=True)
         destination = DESTINATION_USER_PHOTO + filename
         await bot.send_message(message.from_user.id, 'Фотография обрабатывается...')
         await message.photo[-1].download(destination=destination)
