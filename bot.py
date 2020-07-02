@@ -1,6 +1,7 @@
 import logging
 from urllib.parse import urljoin
 
+import os
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.webhook import get_new_configured_app
 from aiogram.bot import api
@@ -29,7 +30,6 @@ WEBHOOK_URL_PATH = '/webhook/' + TOKEN
 WEBHOOK_URL = WEBHOOK_HOST + WEBHOOK_URL_PATH
 
 WEBHOOK_URL = urljoin(WEBHOOK_HOST, WEBHOOK_PATH)
-
 
 
 @dp.message_handler(commands=['help'])
@@ -72,6 +72,7 @@ def main():
                            port=int(PORT),
                            url_path=TOKEN)
     executor.bot.setWebhook()
+
 
 async def on_startup(dp):
     await bot.delete_webhook()
