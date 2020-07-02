@@ -22,6 +22,12 @@ WEBHOOK_PATH = '/webhook/' + TOKEN
 WEBAPP_HOST = '0.0.0.0'
 WEBAPP_PORT = 32102
 
+PROJECT_NAME = 'immense-taiga-94950'
+
+WEBHOOK_HOST = f'https://{PROJECT_NAME}.herokuapp.com'  # Enter here your link from Heroku project settings
+WEBHOOK_URL_PATH = '/webhook/' + TOKEN
+WEBHOOK_URL = WEBHOOK_HOST + WEBHOOK_URL_PATH
+
 WEBHOOK_URL = urljoin(WEBHOOK_HOST, WEBHOOK_PATH)
 
 
@@ -67,36 +73,14 @@ def main():
                            url_path=TOKEN)
     executor.bot.setWebhook()
 
-
 async def on_startup(dp):
-    await bot.set_webhook(WEBHOOK_HOST + TOKEN)
+    await bot.delete_webhook()
+    await bot.set_webhook(WEBHOOK_URL)
     # insert code here to run it after start
 
 
-async def on_shutdown(dp):
-    logging.warning('Shutting down..')
-
-    # insert code here to run it before shutdown
-
-    # Remove webhook (not acceptable in some cases)
-    await bot.delete_webhook()
-
-    # Close DB connection (if used)
-    await dp.storage.close()
-    await dp.storage.wait_closed()
-
-    logging.warning('Bye!')
-
-
 if __name__ == '__main__':
-    executor.start_webhook(
-        dispatcher=dp,
-        on_startup=on_startup,
-        on_shutdown=on_shutdown,
-        skip_updates=True,
-        host=WEBAPP_HOST,
-        port=WEBAPP_PORT,
-    )
-    # app = get_new_configured_app(dispatcher=dp, path=WEBHOOK_PATH)
-    # app.on_startup(on_startup)
-    # web.run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT)
+    app = get_new_configured_app(dispatcher=dp, path=WEBHOOK_URL_PATH)
+    app.on_startup.append(on_startup)
+    web.run_app(app, host='0.0.0.0', port=os.getenv('PORT'))  # Heroku stores port you have to listen in your app
+    # executor.start_polling(dp)
