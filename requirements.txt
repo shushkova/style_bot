@@ -9,3 +9,8 @@ idna==2.10
 multidict==4.7.6
 pytz==2020.1
 yarl==1.4.2
+https://download.pytorch.org/whl/cpu/torch-1.1.0-cp37-cp37m-linux_x86_64.whl
+https://download.pytorch.org/whl/cpu/torchvision-0.3.0-cp37-cp37m-linux_x86_64.whl
+fastai
+dominate>=2.3.1
+visdom>=0.1.8.3
