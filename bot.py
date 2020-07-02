@@ -64,9 +64,9 @@ async def process_photo(message: types.Message):
         await message.photo[-1].download(destination=destination)
         os.system("python pytorch-CycleGAN-and-pix2pix/test.py --dataroot 'pytorch-CycleGAN-and-pix2pix/photo' --name "
                   "horse2zebra_pretrained --model test --no_dropout --gpu_ids -1")
-        print(os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/'))
-        print(os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/'))
-        print(os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/images/'))
+        dir1 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/')
+        dir2 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/')
+        dir3 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/images/')
 
         output_path = 'pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/images/photo_fake.png'
         with open(output_path, 'rb') as photo:
@@ -74,7 +74,7 @@ async def process_photo(message: types.Message):
         os.remove(destination)
         os.remove(output_path)
     except Exception as e:
-        await bot.send_message(message.from_user.id, f'🤒 Ошибка обработки фотографии: {e}')
+        await bot.send_message(dir1, dir2, dir3, message.from_user.id, f'🤒 Ошибка обработки фотографии: {e}')
 """
 @dp.message_handler(content_types=types.ContentType.TEXT)
 async def do_echo(message: types.Message):
