@@ -30,7 +30,7 @@ WEBHOOK_URL_PATH = '/webhook/' + TOKEN
 WEBHOOK_URL = WEBHOOK_HOST + WEBHOOK_URL_PATH
 WEBHOOK_URL = urljoin(WEBHOOK_HOST, WEBHOOK_PATH)
 
-DESTINATION_USER_PHOTO = '/photo/'
+DESTINATION_USER_PHOTO = '/pytorch-CycleGAN-and-pix2pix/photo/'
 
 @dp.message_handler(commands=['help'])
 async def send_menu(message: types.Message):
@@ -54,7 +54,7 @@ async def start_command(message: types.Message):
 @dp.message_handler(content_types=types.ContentTypes.PHOTO)
 async def process_photo(message: types.Message):
     try:
-        filename = 'photo.jpeg'
+        filename = 'photo.jpg'
         destination = DESTINATION_USER_PHOTO + filename
         await bot.send_message(message.from_user.id, 'Фотография обрабатывается...')
         await message.photo[-1].download(destination=destination)
