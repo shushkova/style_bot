@@ -62,7 +62,7 @@ async def process_photo(message: types.Message):
                   "horse2zebra_pretrained --model test --no_dropout --gpu_ids -1")
         await bot.send_message(message.from_user.id, 'Фотография обрабатывается...')
         await message.photo[-1].download(destination=destination)
-        os.system("python pytorch-CycleGAN-and-pix2pix/test.py --dataroot 'pytorch-CycleGAN-and-pix2pix/photos' --name "
+        os.system("python pytorch-CycleGAN-and-pix2pix/test.py --dataroot 'pytorch-CycleGAN-and-pix2pix/photo' --name "
                   "horse2zebra_pretrained --model test --no_dropout --gpu_ids -1")
 
         output_path = '/results/horse2zebra_pretrained/test_latest/images/photo_fake.png'
