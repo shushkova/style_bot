@@ -30,7 +30,7 @@ WEBHOOK_URL_PATH = '/webhook/' + TOKEN
 WEBHOOK_URL = WEBHOOK_HOST + WEBHOOK_URL_PATH
 WEBHOOK_URL = urljoin(WEBHOOK_HOST, WEBHOOK_PATH)
 
-DESTINATION_USER_PHOTO = '/pytorch-CycleGAN-and-pix2pix/photo/'
+DESTINATION_USER_PHOTO = 'pytorch-CycleGAN-and-pix2pix/photos/'
 
 @dp.message_handler(commands=['help'])
 async def send_menu(message: types.Message):
