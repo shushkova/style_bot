@@ -73,7 +73,7 @@ async def process_photo(message: types.Message):
         dir1 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/')
         dir2 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/')
         dir3 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/images/')
-        await bot.send_message(dir1, dir2, dir3, message.from_user.id, f'🤒 Ошибка обработки фотографии: {e}')
+        await bot.send_message(message.from_user.id, f'🤒 Ошибка обработки фотографии: {e, dir1, dir2, dir3,}')
 """
 @dp.message_handler(content_types=types.ContentType.TEXT)
 async def do_echo(message: types.Message):
