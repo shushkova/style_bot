@@ -51,31 +51,6 @@ async def start_command(message: types.Message):
     await message.reply("Привет!\nЯ - StyleTransferBot!\nПришлите картинки, которые Вы хотите преобразовать")
     # await send_menu(message=message)
 
-
-@dp.message_handler(content_types=types.ContentTypes.PHOTO)
-async def process_photo(message: types.Message):
-    try:
-        filename = 'photo.jpg'
-        destination = DESTINATION_USER_PHOTO + filename
-        os.system("bash pytorch-CycleGAN-and-pix2pix/scripts/download_cyclegan_model.sh horse2zebra")
-        # os.system("python pytorch-CycleGAN-and-pix2pix/test.py --dataroot 'pytorch-CycleGAN-and-pix2pix/photo' --name "
-        # "horse2zebra_pretrained --model test --no_dropout --gpu_ids -1")
-        await bot.send_message(message.from_user.id, 'Фотография обрабатывается...')
-        await message.photo[-1].download(destination=destination)
-        os.system("python pytorch-CycleGAN-and-pix2pix/test.py --dataroot 'pytorch-CycleGAN-and-pix2pix/photo' --name "
-                  "horse2zebra_pretrained --model test --no_dropout --gpu_ids -1")
-        output_path = 'pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/images/photo_fake.png'
-        with open(output_path, 'rb') as photo:
-            await bot.send_photo(message.from_user.id, photo)
-        os.remove(destination)
-        os.remove(output_path)
-    except Exception as e:
-        await bot.send_message(message.from_user.id, f'🤒 Ошибка обработки фотографии: {e}')
-
-    dir1 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/')
-    dir2 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/')
-    dir3 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/images/')
-    await bot.send_message(message.from_user.id, f'🤒 Пути фотографии: {dir1, dir2, dir3,}')
 """
 @dp.message_handler(content_types=types.ContentType.TEXT)
 async def do_echo(message: types.Message):
