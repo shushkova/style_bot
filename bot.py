@@ -39,6 +39,7 @@ class TestStates(Helper):
     TEST_STATE_0 = ListItem()
     TEST_STATE_1 = ListItem()
 
+
 state_change_success_message = 'Текущее состояние успешно изменено'
 state_reset_message = 'Состояние успешно сброшено'
 current_state_message = 'Текущее состояние - "{current_state}", что удовлетворяет условию "один из {states}"'
@@ -110,9 +111,8 @@ async def process_callback_button1(callback_query: types.CallbackQuery):
     """argument = message.get_args()
     state = dp.current_state(user=message.from_user.id)"""
     await bot.answer_callback_query(callback_query.id)
-    await bot.send_message(callback_query.from_user.id, 'Отправьте две картинки для переноса стиля в одном письме ('
-                                                        'первая картинка - контекст, вторая - '
-                                                        'стиль).\nПредупреждение: обработка займет 2-3 минуты!')
+    await bot.send_message(callback_query.from_user.id, 'Отправьте две картинки для переноса стиля.\nПредупреждение: '
+                                                        'обработка займет 2-3 минуты!')
     # await state.set_state(TestStates.all()[int(argument)])
     # process_photo(callback_query)
 
@@ -160,21 +160,23 @@ async def gan(message: types.Message, state: FSMContext):
 async def style_transfer(message: types.Message, state: FSMContext):
     filename = 'content.jpg'
     destination = f'style_transfer/input/{filename}'
-    await message.photo[-2].download(destination=destination)
+    await message.answer(f"Фотография контекста:")
+    await message.photo[-1].download(destination=destination)
 
+    await message.answer(f"Фотография стиля:")
     filename = 'style.jpg'
     destination = f'style_transfer/input/{filename}'
     await message.photo[-1].download(destination=destination)
 
     result = StyleTransfer()
     result.run("style_transfer/input/style.jpg",
-                        "style_transfer/input/content.jpg")
+               "style_transfer/input/content.jpg")
     output_path = "style_transfer/output/output.jpg"
     result.save(output_path)
     with open(output_path, 'rb') as photo:
         await bot.send_photo(message.from_user.id, photo)
 
-    await message.answer(f"Введите команду /nn для того, чтобы посчитать новую фотографию.")
+    await message.answer(f"Введите команду /choice для того, чтобы посчитать новую фотографию.")
     await state.finish()
 
 
