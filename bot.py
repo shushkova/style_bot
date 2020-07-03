@@ -20,6 +20,7 @@ TOKEN = '1359919586:AAG8rzjvD18zcMWJqLg-7Wd6beM1j88i8MY'
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
+
 WEBHOOK_HOST = 'https://immense-taiga-94950.herokuapp.com/'
 WEBHOOK_PATH = '/webhook/' + TOKEN
 WEBAPP_HOST = '0.0.0.0'
@@ -39,7 +40,6 @@ class TestStates(Helper):
     TEST_STATE_0 = ListItem()
     TEST_STATE_1 = ListItem()
     TEST_STATE_2 = ListItem()
-
 
 state_change_success_message = 'Текущее состояние успешно изменено'
 state_reset_message = 'Состояние успешно сброшено'
