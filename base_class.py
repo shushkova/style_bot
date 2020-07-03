@@ -13,7 +13,7 @@ import torchvision.models as models
 import copy
 
 
-PATH = 'vgg19.pth'
+PATH = 'vgg11.pth'
 
 
 class ContentLoss(nn.Module):
