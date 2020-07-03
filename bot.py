@@ -38,6 +38,7 @@ class TestStates(Helper):
     mode = HelperMode.snake_case
     TEST_STATE_0 = ListItem()
     TEST_STATE_1 = ListItem()
+    TEST_STATE_2 = ListItem()
 
 
 state_change_success_message = 'Текущее состояние успешно изменено'
@@ -114,7 +115,7 @@ async def process_callback_button1(callback_query: types.CallbackQuery):
     await bot.send_message(callback_query.from_user.id, 'Отправьте две картинки для переноса стиля.\nПредупреждение: '
                                                         'обработка займет 2-3 минуты!')
 
-    await bot.send_message(callback_query.from_user.id, f"Фотографии контекста стиля (одновременно): ")
+    await bot.send_message(callback_query.from_user.id, f"Фотография контекста: ")
     # await state.set_state(TestStates.all()[int(argument)])
     # process_photo(callback_query)
 
@@ -160,10 +161,16 @@ async def gan(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state=TestStates.all()[0], content_types=types.ContentTypes.PHOTO)
 async def style_transfer(message: types.Message, state: FSMContext):
+    logger.info(f"message.photo: {message.photo}")
     filename = 'content.jpg'
     destination = f'style_transfer/input/{filename}'
     await message.photo[-1].download(destination=destination)
+    await message.answer(f"Загрузите фотографию стиля:")
+    await state.set_state(TestStates.all()[2])
 
+
+@dp.message_handler(state=TestStates.all()[2], content_types=types.ContentTypes.PHOTO)
+async def style_transfer(message: types.Message, state: FSMContext):
     filename = 'style.jpg'
     destination = f'style_transfer/input/{filename}'
     await message.photo[-1].download(destination=destination)
@@ -178,6 +185,7 @@ async def style_transfer(message: types.Message, state: FSMContext):
 
     await message.answer(f"Введите команду /choice для того, чтобы посчитать новую фотографию.")
     await state.finish()
+
 
 
 @dp.message_handler(content_types=types.ContentType.TEXT)
