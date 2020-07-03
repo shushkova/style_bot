@@ -13,7 +13,7 @@ import torchvision.models as models
 import copy
 
 
-PATH = '/content/drive/My Drive/Colab Notebooks/models/vgg19.pth'
+PATH = 'vgg19.pth'
 
 
 class ContentLoss(nn.Module):

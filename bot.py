@@ -74,7 +74,7 @@ async def process_command_1(message: types.Message):
 async def start_command(message: types.Message):
     """отправиь список команд бота"""
     await message.reply("Привет!\nЯ - StyleTransferBot!\nВозможно два режима работы: Style Transfer (перенос стиля) и "
-                        "GAN (превращение лошади в зебру).\nДля выбора режима работы введите команду \choice")
+                        "GAN (превращение лошади в зебру).\nДля выбора режима работы введите команду /choice")
     # await send_menu(message=message)
 
 
