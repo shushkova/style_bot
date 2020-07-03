@@ -155,7 +155,7 @@ async def gan(message: types.Message, state: FSMContext):
     except Exception as e:
         await bot.send_message(message.from_user.id, f'🤒 Ошибка обработки фотографии: {e}')
 
-    await message.answer(f"Введите команду /choice для того, чтобы посчитать новую фотографию.")
+    await message.answer(f"Введите команду /choice для новой обработки фотографий")
     await state.finish()
 
 
@@ -183,7 +183,7 @@ async def style_transfer(message: types.Message, state: FSMContext):
     with open(output_path, 'rb') as photo:
         await bot.send_photo(message.from_user.id, photo)
 
-    await message.answer(f"Введите команду /choice для того, чтобы посчитать новую фотографию.")
+    await message.answer(f"Введите команду /choice для новой обработки фотографий")
     await state.finish()
 
 
