@@ -110,7 +110,9 @@ async def process_callback_button1(callback_query: types.CallbackQuery):
     """argument = message.get_args()
     state = dp.current_state(user=message.from_user.id)"""
     await bot.answer_callback_query(callback_query.id)
-    await bot.send_message(callback_query.from_user.id, 'Отправьте две картинки для переноса стиля!')
+    await bot.send_message(callback_query.from_user.id, 'Отправьте две картинки для переноса стиля в одном письме ('
+                                                        'первая картинка - контекст, вторая - '
+                                                        'стиль).\nПредупреждение: обработка займет 2-3 минуты!')
     # await state.set_state(TestStates.all()[int(argument)])
     # process_photo(callback_query)
 
@@ -150,7 +152,7 @@ async def gan(message: types.Message, state: FSMContext):
     except Exception as e:
         await bot.send_message(message.from_user.id, f'🤒 Ошибка обработки фотографии: {e}')
 
-    await message.answer(f"Введите команду /nn для того, чтобы посчитать новую фотографию.")
+    await message.answer(f"Введите команду /choice для того, чтобы посчитать новую фотографию.")
     await state.finish()
 
 
@@ -163,8 +165,6 @@ async def style_transfer(message: types.Message, state: FSMContext):
     filename = 'style.jpg'
     destination = f'style_transfer/input/{filename}'
     await message.photo[-1].download(destination=destination)
-
-    await message.answer(f"Обработка изображений")
 
     result = StyleTransfer()
     output = result.run("style_transfer/input/style.jpg",

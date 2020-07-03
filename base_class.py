@@ -164,7 +164,7 @@ class StyleTransfer:
         return optimizer
 
     def run_style_transfer(self, cnn, normalization_mean, normalization_std,
-                           content_img, style_img, input_img, num_steps=150,
+                           content_img, style_img, input_img, num_steps=50,
                            style_weight=100000, content_weight=1):
         """Run the style transfer."""
         print('Building the style transfer model..')
