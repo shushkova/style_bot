@@ -36,12 +36,16 @@ DESTINATION_USER_PHOTO = 'pytorch-CycleGAN-and-pix2pix/photo/'
 @dp.message_handler(commands=['help'])
 async def send_menu(message: types.Message):
     """отправиь список команд бота"""
+    dir1 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/')
+    dir2 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/')
+    dir3 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/images/')
     await message.reply(
-        text="""
+        text=f"""
         Это StyleTransferBot. Пришлите фотогрфаии\n
         Мои команды: 
         /start - приветсвенное сообщение
-        /help -- увидеть помощь"""
+        /help -- увидеть помощь
+        {dir1, dir2, dir3,}"""
     )
 
 
@@ -50,6 +54,27 @@ async def start_command(message: types.Message):
     """отправиь список команд бота"""
     await message.reply("Привет!\nЯ - StyleTransferBot!\nПришлите картинки, которые Вы хотите преобразовать")
     # await send_menu(message=message)
+
+
+@dp.message_handler(content_types=types.ContentTypes.PHOTO)
+async def process_photo(message: types.Message):
+    try:
+        filename = 'photo.jpg'
+        destination = DESTINATION_USER_PHOTO + filename
+        os.system("bash pytorch-CycleGAN-and-pix2pix/scripts/download_cyclegan_model.sh horse2zebra")
+        # os.system("python pytorch-CycleGAN-and-pix2pix/test.py --dataroot 'pytorch-CycleGAN-and-pix2pix/photo' --name "
+        # "horse2zebra_pretrained --model test --no_dropout --gpu_ids -1")
+        await bot.send_message(message.from_user.id, 'Фотография обрабатывается...')
+        await message.photo[-1].download(destination=destination)
+        os.system("python pytorch-CycleGAN-and-pix2pix/test.py --dataroot 'pytorch-CycleGAN-and-pix2pix/photo' --name "
+                  "horse2zebra_pretrained --model test --no_dropout --gpu_ids -1")
+        output_path = 'pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/images/photo_fake.png'
+        with open(output_path, 'rb') as photo:
+            await bot.send_photo(message.from_user.id, photo)
+        os.remove(destination)
+        os.remove(output_path)
+    except Exception as e:
+        await bot.send_message(message.from_user.id, f'🤒 Ошибка обработки фотографии: {e}')
 
 """
 @dp.message_handler(content_types=types.ContentType.TEXT)
