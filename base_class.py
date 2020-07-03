@@ -82,11 +82,7 @@ class StyleTransfer:
         image = tensor.cpu().clone()
         image = image.squeeze(0)  # функция для отрисовки изображения
         image = self.unloader(image)
-        plt.imshow(image)
-        if title is not None:
-            plt.title(title)
-        plt.pause(0.001)
-
+        return image
         # main functions
 
     def load_images(self, path1, path2):
