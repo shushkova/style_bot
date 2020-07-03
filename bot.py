@@ -4,11 +4,7 @@ from urllib.parse import urljoin
 import os
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.webhook import get_new_configured_app
-from aiogram.bot import api
-import asyncio
 from aiohttp import web
-import random
-from time import sleep
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -36,21 +32,12 @@ DESTINATION_USER_PHOTO = 'pytorch-CycleGAN-and-pix2pix/photo/'
 @dp.message_handler(commands=['help'])
 async def send_menu(message: types.Message):
     """отправиь список команд бота"""
-    dir1 = os.listdir('results/')
-    dir1 = os.listdir('results/horse2zebra_pretrained/')
-    dir2 = os.listdir('results/horse2zebra_pretrained/test_latest/')
-    dir3 = os.listdir('results/horse2zebra_pretrained/test_latest/images/')
-    """dir1 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/')
-    dir1 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/')
-    dir2 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/')
-    dir3 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/images/')"""
     await message.reply(
         text=f"""
         Это StyleTransferBot. Пришлите фотогрфаии\n
         Мои команды: 
         /start - приветсвенное сообщение
-        /help -- увидеть помощь
-        {dir1, dir2, dir3,}"""
+        /help -- увидеть помощь"""
     )
 
 
