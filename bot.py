@@ -113,6 +113,8 @@ async def process_callback_button1(callback_query: types.CallbackQuery):
     await bot.answer_callback_query(callback_query.id)
     await bot.send_message(callback_query.from_user.id, 'Отправьте две картинки для переноса стиля.\nПредупреждение: '
                                                         'обработка займет 2-3 минуты!')
+
+    await bot.send_message(callback_query.from_user.id, f"Фотографии контекста стиля (одновременно): ")
     # await state.set_state(TestStates.all()[int(argument)])
     # process_photo(callback_query)
 
@@ -160,10 +162,8 @@ async def gan(message: types.Message, state: FSMContext):
 async def style_transfer(message: types.Message, state: FSMContext):
     filename = 'content.jpg'
     destination = f'style_transfer/input/{filename}'
-    await message.answer(f"Фотография контекста:")
-    await message.photo[-1].download(destination=destination)
+    await message.photo[-2].download(destination=destination)
 
-    await message.answer(f"Фотография стиля:")
     filename = 'style.jpg'
     destination = f'style_transfer/input/{filename}'
     await message.photo[-1].download(destination=destination)
