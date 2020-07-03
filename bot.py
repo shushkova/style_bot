@@ -167,7 +167,7 @@ async def style_transfer(message: types.Message, state: FSMContext):
     await message.photo[-1].download(destination=destination)
 
     result = StyleTransfer()
-    output = result.run("style_transfer/input/style.jpg",
+    result.run("style_transfer/input/style.jpg",
                         "style_transfer/input/content.jpg")
     output_path = "style_transfer/output/output.jpg"
     result.save(output_path)
