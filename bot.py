@@ -70,10 +70,12 @@ async def process_photo(message: types.Message):
         os.remove(destination)
         os.remove(output_path)
     except Exception as e:
-        dir1 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/')
-        dir2 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/')
-        dir3 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/images/')
-        await bot.send_message(message.from_user.id, f'🤒 Ошибка обработки фотографии: {e, dir1, dir2, dir3,}')
+        await bot.send_message(message.from_user.id, f'🤒 Ошибка обработки фотографии: {e}')
+
+    dir1 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/')
+    dir2 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/')
+    dir3 = os.listdir('pytorch-CycleGAN-and-pix2pix/results/horse2zebra_pretrained/test_latest/images/')
+    await bot.send_message(message.from_user.id, f'🤒 Пути фотографии: {dir1, dir2, dir3,}')
 """
 @dp.message_handler(content_types=types.ContentType.TEXT)
 async def do_echo(message: types.Message):
