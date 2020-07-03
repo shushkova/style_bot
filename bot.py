@@ -3,18 +3,26 @@ from urllib.parse import urljoin
 
 import os
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.webhook import get_new_configured_app
 from aiohttp import web
 from aiogram.types import ReplyKeyboardRemove, \
     ReplyKeyboardMarkup, KeyboardButton, \
     InlineKeyboardMarkup, InlineKeyboardButton
 
+from aiogram.dispatcher.filters.state import State, StatesGroup
+import keyboard as kb
+from aiogram.utils.helper import Helper, HelperMode, ListItem
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+
+from base_class import StyleTransfer
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 TOKEN = '1359919586:AAG8rzjvD18zcMWJqLg-7Wd6beM1j88i8MY'
 bot = Bot(token=TOKEN)
-dp = Dispatcher(bot)
+dp = Dispatcher(bot, storage=MemoryStorage())
 
 WEBHOOK_HOST = 'https://immense-taiga-94950.herokuapp.com/'
 WEBHOOK_PATH = '/webhook/' + TOKEN
@@ -29,9 +37,31 @@ WEBHOOK_URL = urljoin(WEBHOOK_HOST, WEBHOOK_PATH)
 
 DESTINATION_USER_PHOTO = 'pytorch-CycleGAN-and-pix2pix/photo/'
 
-inline_btn_1 = InlineKeyboardButton('Style Transfer', callback_data='button1')
-inline_btn_2 = InlineKeyboardButton('GAN', callback_data='button2')
-inline_kb = InlineKeyboardMarkup().row(inline_btn_1, inline_btn_2)
+from aiogram.utils.helper import Helper, HelperMode, ListItem
+
+
+class TestStates(Helper):
+    mode = HelperMode.snake_case
+    TEST_STATE_0 = ListItem()
+    TEST_STATE_1 = ListItem()
+
+
+help_message = 'Для того, чтобы изменить текущее состояние пользователя, ' \
+               f'отправь команду "/setstate x", где x - число от 0 до {len(TestStates.all()) - 1}.\n' \
+               'Чтобы сбросить текущее состояние, отправь "/setstate" без аргументов.'
+
+start_message = 'Привет! Это демонстрация работы FSM.\n' + help_message
+state_change_success_message = 'Текущее состояние успешно изменено'
+state_reset_message = 'Состояние успешно сброшено'
+current_state_message = 'Текущее состояние - "{current_state}", что удовлетворяет условию "один из {states}"'
+
+MESSAGES = {
+    'start': start_message,
+    'help': help_message,
+    'state_change': state_change_success_message,
+    'state_reset': state_reset_message,
+    'current_state': current_state_message,
+}
 
 
 @dp.message_handler(commands=['help'])
@@ -46,6 +76,13 @@ async def send_menu(message: types.Message):
     )
 
 
+@dp.message_handler(commands=['choice'])
+async def process_command_1(message: types.Message):
+    state = dp.current_state(user=message.from_user.id)
+    await state.reset_state()
+    await message.reply("Выберите тип преобразований", reply_markup=kb.inline_kb)
+
+
 @dp.message_handler(commands=['start'])
 async def start_command(message: types.Message):
     """отправиь список команд бота"""
@@ -53,9 +90,62 @@ async def start_command(message: types.Message):
     # await send_menu(message=message)
 
 
-@dp.callback_query_handler(func=lambda c: c.data == 'button2')
 @dp.message_handler(content_types=types.ContentTypes.PHOTO)
 async def process_photo(message: types.Message):
+    try:
+        filename = 'photo.jpg'
+    except Exception as e:
+        await bot.send_message(message.from_user.id, f'🤒 Ошибка обработки фотографии: {e}')
+
+
+@dp.message_handler(state='*', commands=['finish'])
+async def process_setstate_command(message: types.Message):
+    argument = message.get_args()
+    state = dp.current_state(user=message.from_user.id)
+    if not argument:
+        await state.reset_state()
+        return await message.reply(MESSAGES['state_reset'])
+
+    if (not argument.isdigit()) or (not int(argument) < len(TestStates.all())):
+        return await message.reply(MESSAGES['invalid_key'].format(key=argument))
+
+    await state.set_state(TestStates.all()[int(argument)])
+    await message.reply(MESSAGES['state_change'], reply=False)
+
+
+@dp.message_handler(state='*', commands=['setstate'])
+@dp.callback_query_handler(lambda c: c.data == 'button1')
+async def process_callback_button1(callback_query: types.CallbackQuery):
+    state = dp.current_state(user=callback_query.from_user.id)
+    await state.reset_state()
+    await state.set_state(TestStates.all()[0])
+    """argument = message.get_args()
+    state = dp.current_state(user=message.from_user.id)"""
+    await bot.answer_callback_query(callback_query.id)
+    await bot.send_message(callback_query.from_user.id, 'Отправьте две картинки для переноса стиля!')
+    # await state.set_state(TestStates.all()[int(argument)])
+    # process_photo(callback_query)
+
+
+@dp.message_handler(state='*', commands=['setstate'])
+@dp.callback_query_handler(lambda c: c.data == 'button2')
+async def process_callback_button1(callback_query: types.CallbackQuery):
+    state = dp.current_state(user=callback_query.from_user.id)
+    await state.reset_state()
+    await state.set_state(TestStates.all()[1])
+    """argument = message.get_args()
+    state = dp.current_state(user=message.from_user.id)"""
+    await bot.answer_callback_query(callback_query.id)
+    await bot.send_message(callback_query.from_user.id, 'Отправьте фотографию лошади!')
+    # await state.set_state(TestStates.all()[int(argument)])
+    # process_photo(callback_query)
+    # await state.reset_state()
+
+
+@dp.message_handler(state=TestStates.all()[1], content_types=types.ContentTypes.PHOTO)
+async def gan(message: types.Message, state: FSMContext):
+    await message.answer(f"Gan")
+
     try:
         filename = 'photo.jpg'
         destination = DESTINATION_USER_PHOTO + filename
@@ -72,19 +162,32 @@ async def process_photo(message: types.Message):
     except Exception as e:
         await bot.send_message(message.from_user.id, f'🤒 Ошибка обработки фотографии: {e}')
 
+    await message.answer(f"Введите команду /nn для того, чтобы посчитать новую фотографию.")
+    await state.finish()
 
-@dp.callback_query_handler(func=lambda c: c.data == 'button2')
-async def process_callback_button1(callback_query: types.CallbackQuery):
-    await bot.answer_callback_query(callback_query.id)
-    await bot.send_message(callback_query.from_user.id, 'Нажата вторая кнопка!')
 
-"""
-@dp.message_handler(content_types=types.ContentType.TEXT)
-async def do_echo(message: types.Message):
-    text = message.text
-    if text:
-        await message.reply(text=text)
-"""
+@dp.message_handler(state=TestStates.all()[0], content_types=types.ContentTypes.PHOTO)
+async def style_transfer(message: types.Message, state: FSMContext):
+    await message.answer(f"Style Transfer")
+
+    filename = 'content.jpg'
+    destination = f'style_transfer/input/{filename}'
+    await message.photo[-2].download(destination=destination)
+
+    filename = 'style.jpg'
+    destination = f'style_transfer/input/{filename}'
+    await message.photo[-1].download(destination=destination)
+
+    result = StyleTransfer()
+    output = result.run("style_transfer/input/style.jpg",
+                        "style_transfer/input/content.jpg")
+    output_path = "style_transfer/output/output.jpg"
+    result.save(output_path)
+    with open(output_path, 'rb') as photo:
+        await bot.send_photo(message.from_user.id, photo)
+
+    await message.answer(f"Введите команду /nn для того, чтобы посчитать новую фотографию.")
+    await state.finish()
 
 
 @dp.message_handler(content_types=types.ContentType.TEXT)
@@ -103,4 +206,3 @@ if __name__ == '__main__':
     app = get_new_configured_app(dispatcher=dp, path=WEBHOOK_URL_PATH)
     app.on_startup.append(on_startup)
     web.run_app(app, host='0.0.0.0', port=os.getenv('PORT'))  # Heroku stores port you have to listen in your app
-    # executor.start_polling(dp)
