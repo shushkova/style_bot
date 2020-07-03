@@ -74,6 +74,9 @@ async def process_photo(message: types.Message):
 
 
 @dp.callback_query_handler(func=lambda c: c.data == 'button2')
+async def process_callback_button1(callback_query: types.CallbackQuery):
+    await bot.answer_callback_query(callback_query.id)
+    await bot.send_message(callback_query.from_user.id, 'Нажата вторая кнопка!')
 
 """
 @dp.message_handler(content_types=types.ContentType.TEXT)
