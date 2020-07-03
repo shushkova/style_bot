@@ -59,7 +59,7 @@ class Normalization(nn.Module):
 
 class StyleTransfer:
     def __init__(self):
-        self.img_size = 170
+        self.img_size = 110
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.unloader = transforms.ToPILImage()
 
