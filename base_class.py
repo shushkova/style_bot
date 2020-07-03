@@ -59,7 +59,7 @@ class Normalization(nn.Module):
 
 class StyleTransfer:
     def __init__(self):
-        self.img_size = 70
+        self.img_size = 170
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.unloader = transforms.ToPILImage()
 
@@ -160,7 +160,7 @@ class StyleTransfer:
         return optimizer
 
     def run_style_transfer(self, cnn, normalization_mean, normalization_std,
-                           content_img, style_img, input_img, num_steps=50,
+                           content_img, style_img, input_img, num_steps=70,
                            style_weight=100000, content_weight=1):
         """Run the style transfer."""
         print('Building the style transfer model..')
