@@ -162,7 +162,7 @@ async def gan(message: types.Message, state: FSMContext):
 async def style_transfer(message: types.Message, state: FSMContext):
     filename = 'content.jpg'
     destination = f'style_transfer/input/{filename}'
-    await message.photo[-2].download(destination=destination)
+    await message.photo[-1].download(destination=destination)
 
     filename = 'style.jpg'
     destination = f'style_transfer/input/{filename}'
