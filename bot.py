@@ -2,18 +2,14 @@ import logging
 from urllib.parse import urljoin
 
 import os
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram import Bot, Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.webhook import get_new_configured_app
 from aiohttp import web
-from aiogram.types import ReplyKeyboardRemove, \
-    ReplyKeyboardMarkup, KeyboardButton, \
-    InlineKeyboardMarkup, InlineKeyboardButton
-
-from aiogram.dispatcher.filters.state import State, StatesGroup
-import keyboard as kb
-from aiogram.utils.helper import Helper, HelperMode, ListItem
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.utils.helper import Helper, HelperMode, ListItem
+
+import keyboard as kb
 
 from base_class import StyleTransfer
 
@@ -37,27 +33,17 @@ WEBHOOK_URL = urljoin(WEBHOOK_HOST, WEBHOOK_PATH)
 
 DESTINATION_USER_PHOTO = 'pytorch-CycleGAN-and-pix2pix/photo/'
 
-from aiogram.utils.helper import Helper, HelperMode, ListItem
-
 
 class TestStates(Helper):
     mode = HelperMode.snake_case
     TEST_STATE_0 = ListItem()
     TEST_STATE_1 = ListItem()
 
-
-help_message = 'Для того, чтобы изменить текущее состояние пользователя, ' \
-               f'отправь команду "/setstate x", где x - число от 0 до {len(TestStates.all()) - 1}.\n' \
-               'Чтобы сбросить текущее состояние, отправь "/setstate" без аргументов.'
-
-start_message = 'Привет! Это демонстрация работы FSM.\n' + help_message
 state_change_success_message = 'Текущее состояние успешно изменено'
 state_reset_message = 'Состояние успешно сброшено'
 current_state_message = 'Текущее состояние - "{current_state}", что удовлетворяет условию "один из {states}"'
 
 MESSAGES = {
-    'start': start_message,
-    'help': help_message,
     'state_change': state_change_success_message,
     'state_reset': state_reset_message,
     'current_state': current_state_message,
@@ -71,8 +57,9 @@ async def send_menu(message: types.Message):
         text=f"""
         Это StyleTransferBot. Пришлите фотогрфаии\n
         Мои команды: 
-        /start - приветсвенное сообщение
-        /help -- увидеть помощь"""
+        /start -- приветсвенное сообщение
+        /help -- увидеть помощь
+        /choice -- выбор режима работы бота"""
     )
 
 
@@ -86,7 +73,8 @@ async def process_command_1(message: types.Message):
 @dp.message_handler(commands=['start'])
 async def start_command(message: types.Message):
     """отправиь список команд бота"""
-    await message.reply("Привет!\nЯ - StyleTransferBot!\nПришлите картинки, которые Вы хотите преобразовать")
+    await message.reply("Привет!\nЯ - StyleTransferBot!\nВозможно два режима работы: Style Transfer (перенос стиля) и "
+                        "GAN (превращение лошади в зебру).\nДля выбора режима работы введите команду \choice")
     # await send_menu(message=message)
 
 
@@ -144,7 +132,7 @@ async def process_callback_button1(callback_query: types.CallbackQuery):
 
 @dp.message_handler(state=TestStates.all()[1], content_types=types.ContentTypes.PHOTO)
 async def gan(message: types.Message, state: FSMContext):
-    await message.answer(f"Gan")
+    await message.answer('GAN начал работу')
 
     try:
         filename = 'photo.jpg'
@@ -168,8 +156,6 @@ async def gan(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state=TestStates.all()[0], content_types=types.ContentTypes.PHOTO)
 async def style_transfer(message: types.Message, state: FSMContext):
-    await message.answer(f"Style Transfer")
-
     filename = 'content.jpg'
     destination = f'style_transfer/input/{filename}'
     await message.photo[-2].download(destination=destination)
@@ -177,6 +163,8 @@ async def style_transfer(message: types.Message, state: FSMContext):
     filename = 'style.jpg'
     destination = f'style_transfer/input/{filename}'
     await message.photo[-1].download(destination=destination)
+
+    await message.answer(f"Обработка изображений")
 
     result = StyleTransfer()
     output = result.run("style_transfer/input/style.jpg",
