@@ -23,7 +23,7 @@ class ContentLoss(nn.Module):
         self.target = target.detach()  # это константа. Убираем ее из дерева вычеслений
         self.loss = F.mse_loss(self.target, self.target)  # to initialize with something
 
-    def forward(self, input):pat
+    def forward(self, input):
         self.loss = F.mse_loss(input, self.target)
         return input
 
